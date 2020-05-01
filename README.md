@@ -1,0 +1,5 @@
+Pokedex App
+---
+
+- Golang
+- ReactJS
