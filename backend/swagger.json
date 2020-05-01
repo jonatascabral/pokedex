@@ -1,0 +1,341 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Url Shortener api",
+    "version": "1.0.0",
+    "title": "Shortener URL",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "jon-jons@hotmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "localhost",
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "API",
+      "description": "Manage the URLs"
+    },
+    {
+      "name": "Base",
+      "description": "Redirect the short urls to original url"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "Base"
+        ],
+        "summary": "Valide if app is up",
+        "operationId": "pong",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "App is OK",
+            "schema": {
+              "$ref": "#/definitions/Pong"
+            }
+          },
+          "500": {
+            "description": "App is NOT OK"
+          }
+        }
+      }
+    },
+    "/metrics": {
+      "get": {
+        "tags": [
+          "API"
+        ],
+        "summary": "Get the redirect metrics",
+        "operationId": "getMetrics",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Metrics",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Metric"
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        },
+        "security": [
+          {
+            "api_basic": []
+          }
+        ]
+      }
+    },
+    "/url": {
+      "get": {
+        "tags": [
+          "API"
+        ],
+        "summary": "Get a especific URL",
+        "operationId": "getUrl",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "description": "The original url or the short url",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The URL",
+            "schema": {
+              "$ref": "#/definitions/UrlResponse"
+            }
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        },
+        "security": [
+          {
+            "api_basic": []
+          }
+        ]
+      }
+    },
+    "/urls": {
+      "get": {
+        "tags": [
+          "API"
+        ],
+        "summary": "Get all URLs",
+        "operationId": "getUrls",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The URLs",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UrlResponse"
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        },
+        "security": [
+          {
+            "api_basic": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "API"
+        ],
+        "summary": "Add a new URL",
+        "operationId": "createUrl",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/UrlRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ShortUrl Created",
+            "schema": {
+              "$ref": "#/definitions/UrlResponse"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/ResponseError"
+            }
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        },
+        "security": [
+          {
+            "api_basic": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "API"
+        ],
+        "summary": "Delete a URL",
+        "operationId": "deleteUrl",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/UrlRequest"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "ShortUrl Deleted"
+          },
+          "400": {
+            "description": "Invalid input, URL not found",
+            "schema": {
+              "$ref": "#/definitions/ResponseError"
+            }
+          },
+          "401": {
+            "description": "Not authorized"
+          }
+        },
+        "security": [
+          {
+            "api_basic": []
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_basic": {
+      "type": "basic"
+    }
+  },
+  "definitions": {
+    "ResponseError": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "example": "Invalid data xpto"
+        }
+      },
+      "xml": {
+        "name": "ResponseError"
+      }
+    },
+    "Pong": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Pong"
+        }
+      },
+      "xml": {
+        "name": "Pong"
+      }
+    },
+    "UrlRequest": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "url",
+          "example": "https://github.com",
+          "description": "The original url to be redirected"
+        }
+      },
+      "xml": {
+        "name": "UrlRequest"
+      }
+    },
+    "UrlResponse": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "url",
+          "example": "https://github.com",
+          "description": "The original url to be redirected"
+        },
+        "short_url": {
+          "type": "string",
+          "format": "string",
+          "example": "li/XPTO",
+          "description": "The short url generated"
+        }
+      },
+      "xml": {
+        "name": "UrlRequest"
+      }
+    },
+    "Metric": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "url",
+          "example": "https://github.com",
+          "description": "The original url to be redirected"
+        },
+        "short_url": {
+          "type": "string",
+          "format": "string",
+          "example": "li/XPTO",
+          "description": "The short url redirected"
+        },
+        "when": {
+          "type": "string",
+          "format": "datetime",
+          "example": "2020-01-27T21:06:26Z",
+          "description": "Which datetime the redirect was made"
+        },
+        "user_ip": {
+          "type": "string",
+          "format": "ip",
+          "example": "127.0.0.1",
+          "description": "The user ip that is redirected"
+        }
+      },
+      "xml": {
+        "name": "Metric"
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}

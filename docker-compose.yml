@@ -1,0 +1,48 @@
+version: '3.7'
+services:
+    database:
+      image: mysql:5.7
+      ports:
+       - 3306:3306
+      environment:
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_DATABASE=pokedex_api
+      networks:
+        default:
+          ipv4_address: 18.18.18.10
+
+    backend:
+      build:
+        args:
+          - APP_PORT=8000
+        context: ./backend
+      ports:
+        - 8000:8000
+      extra_hosts:
+        - database:18.18.18.10
+      depends_on:
+        - database
+      networks:
+        default:
+          ipv4_address: 18.18.18.11
+
+#    frontend:
+#      image: node
+#      ports:
+#        - 8080:8080
+#      volumes:
+#        - ./frontend:/api
+#      extra_hosts:
+#        - backend:18.18.18.11
+#      depends_on:
+#        - backend
+#      networks:
+#        default:
+#          ipv4_address: 18.18.18.12
+
+networks:
+    default:
+      ipam:
+        driver: default
+        config:
+        - subnet: 18.18.18.1/27
