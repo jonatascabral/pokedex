@@ -4,6 +4,7 @@ import (
     "fmt"
     "github.com/gin-gonic/gin"
     "github.com/jinzhu/gorm"
+    "github.com/jonatascabral/pokedex/backend/api/config"
     ctrls "github.com/jonatascabral/pokedex/backend/api/controllers"
     "github.com/jonatascabral/pokedex/backend/api/middlewares"
     "github.com/jonatascabral/pokedex/backend/pkg/database"
@@ -24,11 +25,11 @@ const (
 type Server struct {
     Container di.Container
     Engine    *gin.Engine
-    Settings  *Settings
+    Settings  *config.Settings
 }
 
 func StartServer(dotEnvFiles ...string) *Server {
-    settings := LoadSettings(dotEnvFiles...)
+    settings := config.LoadSettings(dotEnvFiles...)
 
     engine := gin.New()
     engine.Use(gin.Recovery())
@@ -95,15 +96,6 @@ func (s *Server) Run() {
     s.ensureContainer()
     swag.Register(swag.Name, NewSwaggerDoc())
     s.Engine.Run(fmt.Sprintf(":%s", s.Settings.AppPort))
-}
-
-func (s *Server) RunMigration() {
-    s.ensureContainer()
-    db := s.Container.Get(DatabaseRef).(*gorm.DB)
-    utils.Log.Info("Running migrations")
-
-    migration := database.InitMigration(db)
-    migration.Run()
 }
 
 func (s *Server) ensureContainer() {

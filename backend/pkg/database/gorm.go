@@ -6,14 +6,14 @@ import (
     _ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-
 type DatabaseConfig struct {
-    Driver   string
-    Host     string
-    Port     string
-    Name     string
-    Username string
-    Password string
+    Driver        string
+    Host          string
+    Port          string
+    Name          string
+    Username      string
+    Password      string
+    MigrationPath string
 }
 
 func ConnectDatabase(config DatabaseConfig) (*gorm.DB, error) {

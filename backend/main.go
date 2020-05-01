@@ -11,9 +11,6 @@ func main() {
     log = logrus.New()
     server := s.StartServer()
     server.LoadDependencies()
-
-    go server.RunMigration()
-
     server.LoadRoutes()
     server.Run()
 }
